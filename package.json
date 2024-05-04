@@ -155,5 +155,13 @@
         }
       ]
     ]
+  },
+  "dependencies": {
+    "axios": "^1.6.8",
+    "react-native-country-picker-modal": "^2.0.0",
+    "react-native-otp-entry": "^1.6.1",
+    "react-native-otp-inputs": "^7.4.0",
+    "react-native-otp-textinput": "^1.1.5",
+    "react-native-sms-retriever": "^1.1.1"
   }
 }
