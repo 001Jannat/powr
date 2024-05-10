@@ -1,6 +1,15 @@
+import { Input,InputField } from '@gluestack-ui/themed';
 import axios from 'axios';
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, Alert, StyleSheet, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  Alert,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
 import CountryPicker from 'react-native-country-picker-modal';
 import OTPTextView from 'react-native-otp-textinput';
 
@@ -9,40 +18,51 @@ export default function OtpVerification() {
   const [phoneNumber, setPhoneNumber] = useState<string>('');
   const [verificationCode, setVerificationCode] = useState<string>('');
   const [country, setCountry] = useState<any>(null);
-  const [receivedVerificationCode, setReceivedVerificationCode] = useState<string>('');
-  const [isVerificationSuccessful, setIsVerificationSuccessful] = useState<boolean>(false);
+  const [receivedVerificationCode, setReceivedVerificationCode] =
+    useState<string>('');
+  const [isVerificationSuccessful, setIsVerificationSuccessful] =
+    useState<boolean>(false);
 
   const fetchOtp = async () => {
-    console.log("fetch")
+    console.log('fetch');
     try {
-      const response = await axios.get('http://192.168.43.155:3000/getotp');
-      console.log(response,"res")
-      console.log(response.data,"data")
-      const receivedCode = response.data.verificationCode;
-      console.log(receivedCode, "received code");
-      if (receivedCode) {
-        setReceivedVerificationCode(receivedCode);
-        setIsVerificationSuccessful(false);
-      } else {
-        Alert.alert('Error', 'Failed to receive verification code.');
-      }
+      const number = countryCode + phoneNumber;
+      console.log(number, 'number+cuntrycode');
+      const response = await axios.post(
+        `https://ajfuabehi8.execute-api.ap-south-1.amazonaws.com/auth?phonenumber=${number}`
+      );
+      console.log(response, 'res');
+      console.log(response.data, 'data');
     } catch (error) {
-      console.log(error, "error");
-      Alert.alert('Error', 'Failed to fetch verification code. Please try again.');
+      console.log(error, 'error');
+      Alert.alert(
+        'Error',
+        'Failed to fetch verification code. Please try again.'
+      );
     }
-  }
+  };
 
   const handleVerifyCode = async () => {
     try {
-      console.log(phoneNumber,"num");
-      console.log(verificationCode,"code ");
-      const values = { phoneNumber:phoneNumber, verificationCode:verificationCode }
-      const response = await axios.post('http://192.168.43.155:3000/verifyOtp',values);
-      console.log(response,"status")
+      console.log(countryCode, 'cuntrycode');
+      console.log(phoneNumber, 'num');
+      console.log(verificationCode, 'code ');
+      const values = {
+        phoneNumber: phoneNumber,
+        verificationCode: verificationCode,
+      };
+      const response = await axios.post(
+        'http://192.168.43.155:3000/verifyOtp',
+        values
+      );
+      console.log(response, 'status');
       if (response.status === 200) {
         setIsVerificationSuccessful(true);
-        Alert.alert('Verification Successful', 'Phone number verified successfully.');
-        setReceivedVerificationCode(''); 
+        Alert.alert(
+          'Verification Successful',
+          'Phone number verified successfully.'
+        );
+        setReceivedVerificationCode('');
       } else {
         Alert.alert('Error', 'Verification failed. Please try again.');
       }
@@ -86,11 +106,7 @@ export default function OtpVerification() {
                 />
               </View>
               <View style={styles.buttonContainer}>
-                <Button
-                  title=" Verify "
-                  onPress={fetchOtp}
-                  color="#0AB39C"
-                />
+                <Button title=" Verify " onPress={fetchOtp} color="#0AB39C" />
               </View>
             </>
           )}
@@ -98,7 +114,9 @@ export default function OtpVerification() {
             <View style={styles.verificationContainer}>
               <Text style={styles.boldText2}>Enter OTP</Text>
               <Text>We have sent a verification code to </Text>
-              <Text style={styles.boldText3}>+{countryCode} {phoneNumber}</Text>
+              <Text style={styles.boldText3}>
+                +{countryCode} {phoneNumber}
+              </Text>
               <OTPTextView
                 handleTextChange={(code: any) => setVerificationCode(code)}
                 keyboardType="numeric"
@@ -113,7 +131,7 @@ export default function OtpVerification() {
                 />
               </View>
               <View>
-                <Text >Don't receive OTP?</Text>
+                <Text>Don't receive OTP?</Text>
                 <TouchableOpacity onPress={() => {}}>
                   <Text style={styles.resendText}>Resend OTP </Text>
                 </TouchableOpacity>
@@ -123,7 +141,6 @@ export default function OtpVerification() {
         </>
       )}
       {isVerificationSuccessful && (
-        
         <Text style={styles.successMessage}>Verification successful!</Text>
       )}
     </View>
@@ -140,23 +157,23 @@ const styles = StyleSheet.create({
   },
   mainText: {
     marginBottom: 30,
-    color: '#495057'
+    color: '#495057',
   },
   boldText: {
     fontSize: 20,
     fontWeight: 'bold',
-    marginBottom:10
+    marginBottom: 10,
   },
   boldText3: {
     fontSize: 15,
     fontWeight: 'bold',
-    marginBottom:10
+    marginBottom: 10,
   },
   boldText2: {
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
-    color: '#495057'
+    color: '#495057',
   },
   phoneNumberInput: {
     flex: 1,
@@ -205,7 +222,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 15,
     color: '#0AB39C',
-    textAlign:'center'
+    textAlign: 'center',
   },
   verificationContainer: {
     alignItems: 'center',
@@ -215,5 +232,5 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 20,
     color: 'green',
-  }
+  },
 });
